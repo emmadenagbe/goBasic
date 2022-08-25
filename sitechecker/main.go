@@ -44,7 +44,12 @@ func main() {
 
 	for l := range c {
 		//fmt.Println(<-c)
-		go checkWebsite(l, c)
+		//l := l
+		go func(l string) {
+			time.Sleep(5 * time.Second)
+			go checkWebsite(l, c)
+		}(l)
+
 	}
 
 	//for i := 0; i < len(websiteName); i++ {
@@ -55,6 +60,7 @@ func main() {
 }
 
 func checkWebsite(link string, c chan string) {
+	//time.Sleep(time.Minute)
 	res, err := http.Get(string(link))
 	if err != nil {
 		c <- err.Error()
@@ -62,7 +68,7 @@ func checkWebsite(link string, c chan string) {
 	} else {
 		if res.StatusCode == 200 {
 			//c <- "Website is up and running"
-			time.Sleep(time.Minute)
+
 			c <- link
 			fmt.Println("Website: ", link, " is up and running")
 		} else {
